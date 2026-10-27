@@ -1,0 +1,23 @@
+# Optional: run Neo4j 5 Community + the Graph Data Science plugin in Docker.
+#   1. put NEO4J_PASSWORD=<at least 8 characters> in .env
+#   2. docker compose up -d
+#   3. NEO4J_URI=neo4j://localhost:7687 in .env, then seed from backend/
+# Neo4j Browser: http://localhost:7474
+services:
+  neo4j:
+    image: neo4j:5.26-community
+    container_name: acn-neo4j
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    environment:
+      NEO4J_AUTH: neo4j/${NEO4J_PASSWORD:?Set NEO4J_PASSWORD in .env}
+      NEO4J_PLUGINS: '["graph-data-science"]'
+      NEO4J_dbms_security_procedures_unrestricted: gds.*
+      NEO4J_server_memory_heap_max__size: 1G
+    volumes:
+      - ./neo4j-data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:7474 >/dev/null || exit 1"]
+      interval: 10s
+      retries: 10

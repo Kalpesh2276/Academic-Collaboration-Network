@@ -1,0 +1,24 @@
+digraph ACN {
+  graph [rankdir=LR, fontname="Helvetica", bgcolor="white", pad=0.4, nodesep=0.7, ranksep=1.1,
+         label="Academic Collaboration Network - implemented Neo4j graph schema\n(dashed = extension beyond Review-1: Journal node, PUBLISHED_IN, Paper.doi)", labelloc=b, fontsize=12];
+  node [shape=box, style="rounded,filled", fontname="Helvetica", fontsize=11, color="#1b2433", fontcolor="white", penwidth=1.2];
+  edge [fontname="Helvetica", fontsize=10, color="#5d6879", fontcolor="#1b2433"];
+
+  Researcher [fillcolor="#2f5da8", label=<<b>Researcher</b><br/><font point-size="9">researcherId (unique) · name · email (unique)<br/>specialization · experienceYears<br/>[analytics] influenceRank · collaborationRank · communityId</font>>];
+  Paper [fillcolor="#0f8b8d", label=<<b>Paper</b><br/><font point-size="9">paperId (unique) · title · publicationYear<br/>abstract · doi (unique, extension)<br/>[analytics] pageRank</font>>];
+  Institution [fillcolor="#6b4c9a", label=<<b>Institution</b><br/><font point-size="9">institutionId (unique) · name<br/>location · type</font>>];
+  Department [fillcolor="#a77bb4", label=<<b>Department</b><br/><font point-size="9">departmentId (unique) · name</font>>];
+  Topic [fillcolor="#c98a1b", label=<<b>Topic</b><br/><font point-size="9">topicId (unique) · name (unique)<br/>description</font>>];
+  Conference [fillcolor="#a23b5a", label=<<b>Conference</b><br/><font point-size="9">conferenceId (unique) · name<br/>year · location</font>>];
+  Journal [fillcolor="#5c6f3a", style="rounded,filled,dashed", label=<<b>Journal</b> (extension)<br/><font point-size="9">journalId (unique) · name<br/>publisher · field</font>>];
+
+  Researcher -> Paper [label="AUTHORED\n{authorOrder}"];
+  Researcher -> Researcher [label="COLLABORATED_WITH\n{paperCount, since, source}\n(undirected in queries)", dir=none, color="#2f5da8", penwidth=1.6];
+  Researcher -> Institution [label="WORKS_AT\n{role}"];
+  Researcher -> Department [label="BELONGS_TO"];
+  Institution -> Department [label="HAS_DEPARTMENT"];
+  Paper -> Paper [label="CITES\n(citing -> cited)", color="#0f8b8d"];
+  Paper -> Topic [label="HAS_TOPIC"];
+  Paper -> Conference [label="PRESENTED_AT"];
+  Paper -> Journal [label="PUBLISHED_IN", style=dashed];
+}
